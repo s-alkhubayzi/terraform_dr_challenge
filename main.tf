@@ -16,6 +16,11 @@ provider "google" {
   region  = var.region
 }
 
+# Fetch the project details of sultan_playground_project
+data "google_project" "sultan_playground_project" {
+  project_id = var.project_id
+}
+
 module "vpc" {
   source     = "./modules/vpc"
   project_id = var.project_id
@@ -45,4 +50,15 @@ module "subnets_firewall" {
   source     = "./modules/firewalls"
   project_id = var.project_id
   vpc_id     = module.vpc.vpc_id
+}
+
+module "api_enablement" {
+  source     = "./modules/api_enablement"
+  project_id = var.project_id
+}
+
+module "iam" {
+  source         = "./modules/iam"
+  project_id     = var.project_id
+  project_number = data.google_project.sultan_playground_project.number
 }
